@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .build();
         ApiService service = retrofit.create(ApiService.class);
         Call<List<Member>> call = service.retrieveMember();
-
+        
         call.enqueue(new Callback<List<Member>>() {
             @Override
             public void onResponse(Call<List<Member>> call, Response<List<Member>> response) {

@@ -21,38 +21,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private EditText editUsername;
     private EditText editPassword;
-    private EditText editEmail;
     private Button buttonSubmit;
 
+    private List<Member> listMember;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editUsername = (EditText) findViewById(R.id.edit_username);
-        editPassword = (EditText) findViewById(R.id.edit_password);
-        editEmail = (EditText) findViewById(R.id.edit_email);
-        buttonSubmit = (Button) findViewById(R.id.button_login);
-
-        buttonSubmit.setOnClickListener(this);
-
+        initUi();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.34/member_database/")
+                .baseUrl("http://161.246.103.128/member_database/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiService service = retrofit.create(ApiService.class);
         Call<List<Member>> call = service.retrieveMember();
-        
+
         call.enqueue(new Callback<List<Member>>() {
             @Override
-            public void onResponse(Call<List<Member>> call, Response<List<Member>> response) {
-                Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<List<Member>> call,
+                                   Response<List<Member>> response) {
+                if (response.isSuccessful()) {
+                    listMember = response.body();
+                }
             }
 
             @Override
-            public void onFailure(Call<List<Member>> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<Member>> call,
+                                  Throwable t) {
+                Toast.makeText(getApplicationContext(),
+                        "Unable to load data",
+                        Toast.LENGTH_SHORT)
+                        .show();
             }
         });
     }
@@ -63,11 +64,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // When click it's call here.
             String username = editUsername.getText().toString();
             String password = editPassword.getText().toString();
-            String email = editEmail.getText().toString();
+            boolean hasUser = false;
 
-            Toast.makeText(this, "username = " + username +
-                            "  password = " + password +
-                            "  email = " + email, Toast.LENGTH_LONG).show();
+            for (Member aMember : listMember) {
+                if (aMember.getUsername().equals(username)) {
+                    hasUser = true;
+                    if (aMember.getPassword().equals(password)) {
+                        Toast.makeText(getApplicationContext(),
+                                "Login Successful",
+                                Toast.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                "Password Incorrect",
+                                Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                }
+            }
+            if (!hasUser) {
+                Toast.makeText(getApplicationContext(),
+                        "Not has this user",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
+    }
+
+    private void initUi() {
+        editUsername = (EditText) findViewById(R.id.edit_username);
+        editPassword = (EditText) findViewById(R.id.edit_password);
+        buttonSubmit = (Button) findViewById(R.id.button_login);
+
+        buttonSubmit.setOnClickListener(this);
     }
 }

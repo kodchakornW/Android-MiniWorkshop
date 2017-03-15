@@ -12,4 +12,4 @@ import retrofit2.http.GET;
 public interface ApiService {
     @GET("retrieve.php")
     Call<List<Member>> retrieveMember();
- }
+}

@@ -4,6 +4,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $password = $_POST['password'];
   $email = $_POST['email'];
 
+  $msgResult;
+
   define('HOST',	'localhost');
   define('USER',	'root');
   define('PASS',	'rootpassword');
@@ -12,15 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $conn = mysqli_connect(HOST, USER, PASS, DB);
 
   $sql = "INSERT INTO member (`username`, `password`, `email`)
-            VALUES('$username', '$password', '$email')";
+  VALUES('$username', '$password', '$email')";
 
   if (mysqli_query ($conn, $sql)) {
-    echo 'Successfully to update status';
+    $msgResult = 'Successfully to insert data.';
   } else {
-    echo 'Unable to update status, Please try again later~';
+    $msgResult = 'Unable to update status, Please try again later~';
   }
 } else {
-  echo 'Incompletely to add data.';
+  $msgResult = 'Incompletely to add data.';
 }
+
+echo json_encode(array("result"=>$msgResult));
 mysqli_close($conn);
 ?>

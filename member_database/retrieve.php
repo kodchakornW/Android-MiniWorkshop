@@ -6,7 +6,7 @@ define('DB',	'my_database');
 
 $conn = mysqli_connect(HOST, USER, PASS, DB);
 
-$sql = "SELECT * FROM member";
+$sql = "SELECT * from member";
 $queried = $conn->query($sql);
 
 $result = array();

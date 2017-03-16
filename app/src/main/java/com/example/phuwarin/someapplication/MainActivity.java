@@ -1,8 +1,8 @@
 package com.example.phuwarin.someapplication;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editUsername;
     private EditText editPassword;
     private Button buttonSubmit;
+    private TextView registerText;
 
     private List<Member> listMember;
 
@@ -31,11 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         initUi();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://161.246.103.128/member_database/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ApiService service = retrofit.create(ApiService.class);
+        ApiService service = RetrofitCreation.getInstance().getService();
         Call<List<Member>> call = service.retrieveMember();
 
         call.enqueue(new Callback<List<Member>>() {
@@ -89,13 +86,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .show();
             }
         }
+        if (view == registerText) {
+            finish();
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void initUi() {
-        editUsername = (EditText) findViewById(R.id.edit_username);
-        editPassword = (EditText) findViewById(R.id.edit_password);
+        editUsername = (EditText) findViewById(R.id.edit_username_login);
+        editPassword = (EditText) findViewById(R.id.edit_password_login);
         buttonSubmit = (Button) findViewById(R.id.button_login);
+        registerText = (TextView) findViewById(R.id.registerText);
 
+        registerText.setOnClickListener(this);
         buttonSubmit.setOnClickListener(this);
     }
 }
